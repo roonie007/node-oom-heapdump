@@ -32,6 +32,17 @@ class FileOutputStream: public OutputStream {
     FILE* stream_;
 };
 
+class ActivityControlAdapter : public ActivityControl {
+    public:
+      ActivityControlAdapter()
+      {}
+
+      ControlOption ReportProgressValue(int done, int total) {
+          printf("\nProgress of heapdump: %d, %d", done, total);
+          return kContinue;
+      }
+  };
+
 void OnOOMError(const char *location, bool is_heap_oom) {
   if (addTimestamp) {
     // Add timestamp to filename
@@ -56,14 +67,17 @@ void OnOOMError(const char *location, bool is_heap_oom) {
 
   // Create heapdump, depending on which Node.js version this can differ
   // for now, just support Node.js 7 and higher
-  const HeapSnapshot* snap = v8::Isolate::GetCurrent()->GetHeapProfiler()->TakeHeapSnapshot();
   
-  FileOutputStream stream(fp);
-  snap->Serialize(&stream, HeapSnapshot::kJSON);
-  fclose(fp);
+    ActivityControlAdapter* control = new ActivityControlAdapter();
+    const HeapSnapshot* snap = v8::Isolate::GetCurrent()->GetHeapProfiler()->TakeHeapSnapshot(control);
+  
+    FileOutputStream stream(fp);
+    snap->Serialize(&stream, HeapSnapshot::kJSON);
+    fclose(fp);
 
-  fprintf(stderr, "Done! Exiting process now.\n");
-  exit(1);
+    fprintf(stderr, "Done! Exiting process now.\n");
+    exit(1);
+  
 }
 
 void ParseArgumentsAndSetErrorHandler(const FunctionCallbackInfo<Value>& args) {
