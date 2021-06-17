@@ -71,7 +71,7 @@ void OnOOMError(const char *location, bool is_heap_oom) {
     strcpy(filename, newFilename);
   }
 
-  fprintf(stderr, "Generating Heapdump to '%s' now...\n", filename);
+  fprintf(stderr, "- Generating Heapdump to '%s' now...\n", filename);
   FILE* fp = fopen(filename, "w");
   if (fp == NULL) abort();
 
@@ -93,7 +93,7 @@ void OnOOMError(const char *location, bool is_heap_oom) {
 
   fprintf(stderr, cmdResult.c_str());
 
-  fprintf(stderr, "Done! Exiting process now test.\n");
+  fprintf(stderr, "- Done! Exiting process now.\n");
 
   exit(1);
 }
