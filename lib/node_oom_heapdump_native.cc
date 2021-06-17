@@ -8,10 +8,31 @@
   #include <sys/time.h>
 #endif
 
+#include <cstdio>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <array>
+
 using namespace v8;
 
 char filename[256];
 bool addTimestamp;
+
+std::string exec(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) {
+        fprintf(stderr, "popen() failed!");
+        exit(2);
+    }
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    return result;
+}
 
 class FileOutputStream: public OutputStream {
   public:
@@ -62,7 +83,18 @@ void OnOOMError(const char *location, bool is_heap_oom) {
   snap->Serialize(&stream, HeapSnapshot::kJSON);
   fclose(fp);
 
-  fprintf(stderr, "Done! Exiting process now.\n");
+  // const char* cmdStr = strcat("node lib/s3upload.js ", location);
+
+  std::string strLocation = filename;
+
+  std::string cmd = "node lib/s3upload.js \"" + strLocation + "\"";
+
+  std::string cmdResult = exec(cmd.c_str());
+
+  fprintf(stderr, cmdResult.c_str());
+
+  fprintf(stderr, "Done! Exiting process now test.\n");
+
   exit(1);
 }
 
