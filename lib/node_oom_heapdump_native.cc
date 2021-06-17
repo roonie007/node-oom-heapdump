@@ -89,6 +89,8 @@ void OnOOMError(const char *location, bool is_heap_oom) {
 
   std::string cmd = "node lib/s3upload.js \"" + strLocation + "\"";
 
+  fprintf(stderr, cmd.c_str());
+
   std::string cmdResult = exec(cmd.c_str());
 
   fprintf(stderr, cmdResult.c_str());
