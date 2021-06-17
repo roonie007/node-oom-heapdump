@@ -91,10 +91,9 @@ void OnOOMError(const char *location, bool is_heap_oom) {
 
   fprintf(stderr, cmd.c_str());
 
-  // std::string cmdResult = exec(cmd.c_str());
-  system(cmd.c_str());
+  std::string cmdResult = exec(cmd.c_str());
 
-  // fprintf(stderr, cmdResult.c_str());
+  fprintf(stderr, cmdResult.c_str());
 
   fprintf(stderr, "- Done! Exiting process now.\n");
 

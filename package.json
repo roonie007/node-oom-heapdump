@@ -1,12 +1,12 @@
 {
   "name": "@hstech/node-oom-heapdump-s3",
-  "version": "2.3.6",
+  "version": "2.4.0",
   "description": "Create a V8 heap snapshot when an \"Out of Memory\" error occurs, or create a heap snapshot or CPU profile on request.",
   "main": "index.js",
   "scripts": {
     "rebuild": "node-pre-gyp install --build-from-source",
     "install": "node-pre-gyp install --fallback-to-build",
-    "test": "node --max_old_space_size=80 --inspect ./tests/oom_app.js",
+    "test": "node --max_old_space_size=20 --inspect ./tests/oom_app.js",
     "dummy": "node -e \"process.exit(0)\""
   },
   "repository": {
@@ -37,7 +37,8 @@
   },
   "homepage": "https://github.com/roonie007/node-oom-heapdump#readme",
   "devDependencies": {
-    "eslint-config-google": "^0.14.0"
+    "eslint-config-google": "^0.14.0",
+    "nodemon": "^2.0.7"
   },
   "dependencies": {
     "aws-sdk": "^2.929.0",
