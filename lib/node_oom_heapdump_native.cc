@@ -53,6 +53,23 @@ class FileOutputStream: public OutputStream {
     FILE* stream_;
 };
 
+inline std::string get_env(const char* key) {
+  if (key == nullptr) {
+    fprintf(stderr, "Null pointer passed as environment variable name");
+    exit(1);
+  }
+  if (*key == '\0') {
+    fprintf(stderr, "Value requested for the empty-name environment variable");
+    exit(1);
+  }
+  const char* ev_val = getenv(key);
+  if (ev_val == nullptr) {
+    fprintf(stderr, "Environment variable not defined");
+    exit(1);
+  }
+  return std::string(ev_val);
+}
+
 void OnOOMError(const char *location, bool is_heap_oom) {
   if (addTimestamp) {
     // Add timestamp to filename
@@ -87,13 +104,14 @@ void OnOOMError(const char *location, bool is_heap_oom) {
 
   std::string strLocation = filename;
 
-  std::string cmd = "node lib/s3upload.js \"" + strLocation + "\"";
-
-  fprintf(stderr, cmd.c_str());
+  std::string cmd = "node node_modules/@hstech/node-oom-heapdump-s3/lib/s3upload.js \"" + strLocation + "\"";
+  // std::string cmdTest = "node lib/s3upload.js \"" + strLocation + "\"";
 
   std::string cmdResult = exec(cmd.c_str());
+  // std::string cmdTestResult = exec(cmdTest.c_str());
 
   fprintf(stderr, cmdResult.c_str());
+  // fprintf(stderr, cmdTestResult.c_str());
 
   fprintf(stderr, "- Done! Exiting process now.\n");
 
